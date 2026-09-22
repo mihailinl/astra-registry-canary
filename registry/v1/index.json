@@ -3,12 +3,12 @@
   "signatures": [
     {
       "key_id": "astra-index-2026a",
-      "sig": "V+mgfxEVYAMWFDQcfTbBZoc+KboDiS5XtOqF6mxXynsqqiMwY6WJE+X4HfjAmMbIEk+xVp7s3Zvhx3bct4AGAg=="
+      "sig": "Wh+Mzovv3UcmG41Z4TJUfN+8Rrp6Fubwz/VoyldnK6U0kr7cmyjsvzDLsGJsLi9nB0VZJ6vO5VkMLd/0LB1ADw=="
     }
   ],
   "signed": {
-    "expires_at": "2026-10-22T00:00:00Z",
-    "issued_at": "2026-09-22T00:00:00Z",
+    "expires_at": "2026-10-22T01:00:00Z",
+    "issued_at": "2026-09-22T01:00:00Z",
     "plugins": [
       {
         "added_at": "2026-08-10",
@@ -23,9 +23,30 @@
         "license": "MIT",
         "name": "dice roller",
         "platform_downloads": {
-          "linux-x64": "https://github.com/someone/dice-roller/releases/download/v1.0.0/dice-roller-1.0.0-linux-x64.astraplugin"
+          "linux-x64": "https://github.com/someone/dice-roller/releases/download/v1.1.0/dice-roller-1.1.0-linux-x64.astraplugin"
         },
         "releases": [
+          {
+            "artifacts": {
+              "linux-x64": {
+                "filename": "dice-roller-1.1.0-linux-x64.astraplugin",
+                "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "size": 1234,
+                "url": "https://github.com/someone/dice-roller/releases/download/v1.1.0/dice-roller-1.1.0-linux-x64.astraplugin"
+              }
+            },
+            "capabilities": [
+              "tools"
+            ],
+            "protocol": 1,
+            "published_at": "2026-08-10T00:00:00Z",
+            "release": {
+              "kind": "github_release",
+              "repo": "someone/dice-roller",
+              "tag": "v1.1.0"
+            },
+            "version": "1.1.0"
+          },
           {
             "artifacts": {
               "linux-x64": {
@@ -55,7 +76,7 @@
         },
         "stars": 0,
         "updated_at": "2026-08-10T00:00:00Z",
-        "version": "1.0.0"
+        "version": "1.1.0"
       },
       {
         "added_at": "2026-08-10",
@@ -106,6 +127,6 @@
       }
     ],
     "schema": "astra.registry.index/1",
-    "serial": 1
+    "serial": 2
   }
 }
