@@ -1,0 +1,12 @@
+{
+  "added_at": "2026-08-10",
+  "id": "dice-roller",
+  "license": "MIT",
+  "name": "dice roller",
+  "schema": "astra.registry.plugin/1",
+  "source": {
+    "kind": "github",
+    "repo": "someone/dice-roller"
+  },
+  "summary": "Rolls dice, so the catalogue is not empty."
+}

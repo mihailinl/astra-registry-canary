@@ -1,0 +1,13 @@
+{
+  "action": "block_install",
+  "entries": [
+    {
+      "kind": "id",
+      "value": "dice-roller"
+    }
+  ],
+  "id": "ASTRA-2026-0001",
+  "published": "2026-09-22",
+  "reason": "A fixture advisory, long enough to be a sentence a user could act on.",
+  "severity": "high"
+}

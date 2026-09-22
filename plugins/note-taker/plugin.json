@@ -1,0 +1,12 @@
+{
+  "added_at": "2026-08-10",
+  "id": "note-taker",
+  "license": "MIT",
+  "name": "note taker",
+  "schema": "astra.registry.plugin/1",
+  "source": {
+    "kind": "github",
+    "repo": "someone/note-taker"
+  },
+  "summary": "Takes notes, so the catalogue has two listings."
+}
