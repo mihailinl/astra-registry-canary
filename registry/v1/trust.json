@@ -3,17 +3,12 @@
   "signatures": [
     {
       "key_id": "TEST-ONLY-DO-NOT-TRUST-root-a",
-      "sig": "A1DIA2uWmLQnKk5Svd66lxJvNz0BkR4P+BfeiiJANbEXPvcGGBFgZIlMcL7hyqqyTBux+Uisd8CG/WOqNzk9Cw=="
+      "sig": "yz3HsYpvkdUlowiGxjgpu45/xa/EuU8dz/bb4tWTEdVPabRVoszELFVEEuajMyc2EiWRp4mcMejsVkHcIH3jBg=="
     }
   ],
   "signed": {
     "expires_at": "2027-09-01T00:00:00Z",
     "index_keys": [
-      {
-        "key_id": "astra-index-2026a",
-        "not_before": "2026-09-01T00:00:00Z",
-        "public_key": "U8/3Y8Zz1qd2TQ+JECdqODTMhWolfxvQFmXRySVd41o="
-      },
       {
         "key_id": "TEST-ONLY-DO-NOT-TRUST-index-2026b",
         "not_before": "2026-09-01T00:00:00Z",
@@ -25,6 +20,6 @@
       "e3329df252a46d747676cb540ae4b986af68a3ad"
     ],
     "schema": "astra.registry.trust/1",
-    "serial": 3
+    "serial": 4
   }
 }
