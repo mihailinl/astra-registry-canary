@@ -2,8 +2,8 @@
   "$banner": "TEST-ONLY REHEARSAL FIXTURE (RC-R2-5 / ROLL-60). Signed with the throwaway keys in tools/testkeys/, whose private halves are published in this repository. No production daemon trusts these roots and nothing a user installs may be signed with them.",
   "signatures": [
     {
-      "key_id": "TEST-ONLY-DO-NOT-TRUST-root-a",
-      "sig": "A1DIA2uWmLQnKk5Svd66lxJvNz0BkR4P+BfeiiJANbEXPvcGGBFgZIlMcL7hyqqyTBux+Uisd8CG/WOqNzk9Cw=="
+      "key_id": "TEST-ONLY-DO-NOT-TRUST-root-b",
+      "sig": "HdGJaQNUJEGsTPJehOxwMbdV56Q2+juVYTHlDKKxSIrRgyXX4/H2WLngBQCzj+xv/kenT8XTcQB3jVdXqS5nBQ=="
     }
   ],
   "signed": {

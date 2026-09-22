@@ -1,0 +1,13 @@
+{
+  "action": "block_install",
+  "entries": [
+    {
+      "kind": "id",
+      "value": "dice-roller"
+    }
+  ],
+  "id": "ASTRA-2026-0005",
+  "published": "2026-09-22",
+  "reason": "An advisory in the root-change commit.",
+  "severity": "high"
+}
