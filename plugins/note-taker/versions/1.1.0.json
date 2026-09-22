@@ -1,0 +1,23 @@
+{
+  "artifacts": {
+    "linux-x64": {
+      "filename": "note-taker-1.1.0-linux-x64.astraplugin",
+      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "size": 1234,
+      "url": "https://github.com/someone/note-taker/releases/download/v1.1.0/note-taker-1.1.0-linux-x64.astraplugin"
+    }
+  },
+  "capabilities": [
+    "tools"
+  ],
+  "id": "note-taker",
+  "protocol": 1,
+  "published_at": "2026-08-10T00:00:00Z",
+  "release": {
+    "kind": "github_release",
+    "repo": "someone/note-taker",
+    "tag": "v1.1.0"
+  },
+  "schema": "astra.registry.version/1",
+  "version": "1.1.0"
+}
