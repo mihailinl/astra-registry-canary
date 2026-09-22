@@ -3,22 +3,30 @@
   "signatures": [
     {
       "key_id": "astra-index-2026a",
-      "sig": "QCFaZYP/+PrhL8o8Pnjf16Dg0LpKSt0mz2J5soPM80qfCtrhoAuJnIFqkvq8eGosbzUqukj9KgGwsJaEMgjYDA=="
+      "sig": "JVl2R8UELUrJ6M0+ENFz2l7e3tKmgMlDWu5npW5kgLo1+Yhnl8fXJ65PrvE98jWkAA9CIaoH3Jx5TxDpzStEAA=="
     },
     {
       "key_id": "TEST-ONLY-DO-NOT-TRUST-index-2026b",
-      "sig": "owh9qoKFZu8pYJRqrifjdF86RIYbBs1P+uSgkN9XIR6KcX2ITFegKfrHHrSLCjfA9YzNytYzmTlKHP59dA8VAg=="
+      "sig": "kPrnC7cv2qPqrDa4Vms2AEusxew5B7uCvx7NlHwwL+AFw9GphTt7/klmbYvE1a9FR0PhStX/vgIWClQWdyBLCw=="
     }
   ],
   "signed": {
-    "expires_at": "2026-09-29T01:00:00Z",
-    "issued_at": "2026-09-22T01:00:00Z",
+    "expires_at": "2026-09-29T04:00:00Z",
+    "issued_at": "2026-09-22T04:00:00Z",
     "revocations": [
       {
         "action": "block_install",
         "id": "ASTRA-2026-0001",
         "kind": "id",
         "reason": "A fixture advisory, long enough to be a sentence a user could act on.",
+        "severity": "high",
+        "value": "dice-roller"
+      },
+      {
+        "action": "block_install",
+        "id": "ASTRA-2026-0003",
+        "kind": "id",
+        "reason": "A second advisory, three hours in.",
         "severity": "high",
         "value": "dice-roller"
       },
@@ -32,6 +40,6 @@
       }
     ],
     "schema": "astra.registry.revocations/1",
-    "serial": 3
+    "serial": 4
   }
 }
