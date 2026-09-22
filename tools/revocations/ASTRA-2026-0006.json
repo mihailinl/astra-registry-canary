@@ -1,0 +1,13 @@
+{
+  "action": "block_install",
+  "entries": [
+    {
+      "kind": "id",
+      "value": "note-taker"
+    }
+  ],
+  "id": "ASTRA-2026-0006",
+  "published": "2026-09-22",
+  "reason": "An advisory after the root change.",
+  "severity": "high"
+}
