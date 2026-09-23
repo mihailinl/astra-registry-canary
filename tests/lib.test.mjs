@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (C) 2026 Minice
 //
-// node --test tests/
+// node --test tests/*.test.mjs
 //
 // The rules the canary's scripts run on, held to fixtures and to this
 // repository's own files. Each rule is also asserted to REFUSE its broken

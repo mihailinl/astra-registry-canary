@@ -28,4 +28,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test tests/
+      # A file list, not the directory: Node 22 reads `tests/` as a module path
+      # and fails with MODULE_NOT_FOUND (the first run here, 35850911600).
+      - run: node --test tests/*.test.mjs
