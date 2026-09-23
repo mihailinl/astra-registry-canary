@@ -32,7 +32,7 @@ verdict: it is a dry run that commits nothing there.
 | `.github/workflows/author-token-probe.yml` | OPEN-MBE-2's one-off measurement of an author-audience OIDC token's claims. It never prints or sends the token |
 | `.github/workflows/probe-log-lint.yml` | Red if the probe's log ever holds a JWT's shape |
 | `.github/workflows/keepalive.yml` | One commit a month, so GitHub never switches this repository's schedules off (ROLL-62) |
-| `.github/workflows/checks.yml` | `node --test tests/`: the rules the scripts above run on |
+| `.github/workflows/checks.yml` | `node --test tests/*.test.mjs`: the rules the scripts above run on |
 | `.well-known/astra-plugin-owner` | The owner file the registry reads. main carries **no** binding line |
 
 ### The canary's commit and its binding line
