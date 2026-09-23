@@ -1,0 +1,42 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Minice
+#
+# B-T1.6's lint over the author-token probe: after every attempt of
+# author-token-probe.yml, read that attempt's job logs and go red if any line
+# holds a JWT's shape. Watched red by dispatching the probe, which then prints
+# a fixture token and mints nothing.
+#
+# A separate workflow rather than a second job in the probe's, so the probe
+# stays one job holding `id-token: write`, and this one holds only
+# `actions: read`. `workflow_run` fires for re-run attempts too, and this reads
+# the attempt that just completed, not the first.
+
+name: Probe log lint
+
+on:
+  workflow_run:
+    workflows: ['Author token probe']
+    types: [completed]
+
+permissions: {}
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: .github/scripts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: No JWT-shaped string in the probe's log
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          RUN_ATTEMPT: ${{ github.event.workflow_run.run_attempt }}
+        run: node .github/scripts/probe-log-lint.mjs

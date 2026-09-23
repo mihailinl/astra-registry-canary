@@ -1,0 +1,88 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Minice
+#
+# BOT-88's weekly canary tag (astra-registry plan B-T1.6).
+#
+# Once a week this pushes one tag per caller of AstraPlugins' plugin-release.yml
+# here — one caller per commit trust.json allowlists — and each tag starts a
+# release through that commit exactly as an author's tag would. Nothing else
+# exercises those commits between real releases, and both pull moving action
+# tags and a moving toolchain, so a GitHub-side change would otherwise be found
+# by the first third-party author to tag (astra-registry plan notes, BOT-88).
+# astra-registry's release-canary then verifies the newest release per commit.
+#
+# Standing approval: the owner's grant of 2026-09-23 (ops CLAUDE.md, "How to
+# work here") covers these tags; the scope is recorded in README.md here and
+# in ops notes/state.md. It is THIS workflow's tags — `release-canary-<sha7>-v
+# 0.<YYYYMMDD>.<n>`, pushed by the push job, and their deletion by the prune
+# job — and nothing else.
+
+name: Canary tag
+
+on:
+  schedule:
+    # Mondays 06:17 UTC: off the hour, where GitHub delays and drops scheduled
+    # runs least. A release takes about half an hour, so astra-registry's
+    # weekly release-canary must run some hours later the same day.
+    - cron: '17 6 * * 1'
+  # No inputs: there is nothing to aim a canary at. The versions come from the
+  # date and the tags already on the remote, and the callers from the tree.
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: canary-tag
+  cancel-in-progress: false
+
+jobs:
+  push:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    # Holds the write deploy key and the receiver's ping URL, and admits only
+    # main, so no other branch's copy of this file can read either.
+    environment: canary-tag
+    permissions:
+      contents: read
+    outputs:
+      tags: ${{ steps.tag.outputs.tags }}
+      version: ${{ steps.tag.outputs.version }}
+    steps:
+      # Over SSH with the deploy key, not with GITHUB_TOKEN: a tag pushed with
+      # GITHUB_TOKEN starts no workflow run (BOT-50), and a canary tag that
+      # starts nothing is the failure this whole repository exists to catch.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          ssh-key: ${{ secrets.CANARY_TAG_DEPLOY_KEY }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Tag each allowlisted caller
+        id: tag
+        run: node .github/scripts/canary-tag.mjs
+      - name: Heartbeat to receiver check canary-tag (BOT-85)
+        env:
+          ASTRA_DEADMAN_URL_CANARY_TAG: ${{ secrets.ASTRA_DEADMAN_URL_CANARY_TAG }}
+        run: node .github/scripts/heartbeat.mjs
+
+  prune:
+    needs: push
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write   # delete Releases and tags older than the newest eight per caller
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+          sparse-checkout: .github
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Keep the newest eight canary releases per caller
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node .github/scripts/prune.mjs

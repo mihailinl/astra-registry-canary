@@ -1,0 +1,7 @@
+{
+  "$comment": "ROLL-62's keepalive for this repository (astra-registry plan B-T1.6, RC-R1-9(b)). Rewritten and committed once a month by .github/workflows/keepalive.yml (by: workflow) or by hand (by: hand), so this repository is never quiet for the 60 days after which GitHub disables its schedules. `month` is the month of the commit that wrote it; `at` that instant; `run` the workflow run that wrote it, or null.",
+  "month": "2026-09",
+  "at": "2026-09-23T10:47:41Z",
+  "by": "hand",
+  "run": null
+}

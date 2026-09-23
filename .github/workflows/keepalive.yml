@@ -1,0 +1,74 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Minice
+#
+# ROLL-62's keepalive for THIS repository (astra-registry plan B-T1.6 and
+# RC-R1-9(b)): "in each repository that holds one" of the schedules it covers,
+# and canary-tag.yml's weekly schedule is one. GitHub disables a public
+# repository's `schedule:` triggers after 60 days with no repository activity,
+# and the canary's own commits do not count on main: they are reachable only
+# from their tags, so main is otherwise quiet for months.
+#
+# Modelled on astra-registry's .github/workflows/keepalive.yml, and for the
+# same reasons, shortened: daily for the first seven days of each month, and a
+# commit only when state/keepalive.json does not already say this month — one
+# commit a month with six retries behind it. `by` says whether the month's
+# commit was this workflow's (GITHUB_TOKEN) or a person's, because whether a
+# GITHUB_TOKEN commit counts as activity is still unmeasured (RC-R1-9(b)).
+#
+# The guard on THIS workflow stopping is receiver check `canary-tag`: if
+# GitHub switches this repository's schedules off, the weekly heartbeat stops
+# and the receiver pages.
+
+name: Keepalive
+
+on:
+  schedule:
+    - cron: '19 6 1-7 * *'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: keepalive
+  cancel-in-progress: false
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write   # one commit: state/keepalive.json, and the step holds it to that
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Record this month, once
+        run: |
+          set -euo pipefail
+          month=$(date -u +%Y-%m)
+          have=$(node -e 'try{process.stdout.write(require("./state/keepalive.json").month||"")}catch{}')
+          if [ "$have" = "$month" ]; then
+            echo "state/keepalive.json already says $month; nothing to do."
+            exit 0
+          fi
+          node -e '
+            const fs = require("fs");
+            const f = "state/keepalive.json";
+            const doc = JSON.parse(fs.readFileSync(f, "utf8"));
+            doc.month = process.argv[1];
+            doc.at = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
+            doc.by = "workflow";
+            doc.run = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
+            fs.writeFileSync(f, JSON.stringify(doc, null, 2) + "\n");
+          ' "$month"
+          git add -- state/keepalive.json
+          staged=$(git diff --cached --name-only)
+          if [ "$staged" != "state/keepalive.json" ]; then
+            echo "::error::staged '$staged'; the keepalive commits state/keepalive.json and nothing else"
+            exit 1
+          fi
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+            commit --quiet -m "keepalive: $month (ROLL-62)"
+          git push --quiet origin HEAD:main
+          echo "committed the $month keepalive"

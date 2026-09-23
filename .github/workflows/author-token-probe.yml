@@ -1,0 +1,54 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Copyright (C) 2026 Minice
+#
+# OPEN-MBE-2's measurement, hosted here (astra-registry plan B-T1.6; contract
+# §10.2): the claims GitHub puts in an OIDC token minted under the author
+# audience, `https://api.minice.ai/plugins/v1/author` (ID-32), in a workflow
+# that is NOT reusable — the shape of an author's own release run.
+#
+# One job, holding `id-token: write`. It prints claim names and types,
+# `exp` − `iat`, the `nbf` offset, `job_workflow_ref`, `run_id`,
+# `run_attempt`, and on a re-run whether `jti` changed. It never prints or
+# sends the token and calls no service. probe-log-lint.yml reads this job's
+# whole log afterwards and is red if any line holds a JWT's shape.
+#
+# Started by a tag `author-token-probe-<anything>`, pushed by hand; the owner's
+# standing grant of 2026-09-23 covers that tag and one re-run of its run
+# (README.md here; ops notes/state.md). A dispatch prints a FIXTURE token and
+# mints nothing: that is the watch that shows the lint can go red.
+
+name: Author token probe
+
+on:
+  push:
+    tags: ['author-token-probe-*']
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  probe:
+    name: probe
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      id-token: write   # the measurement itself
+      actions: read     # a re-run reads its previous attempt's log for the jti digest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: .github/scripts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Measure the author-audience token
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PROBE_JOB_NAME: probe
+        run: node .github/scripts/token-probe.mjs
+      - name: Print a fixture token (the lint's watch; mints nothing)
+        if: github.event_name == 'workflow_dispatch'
+        run: node .github/scripts/token-probe.mjs --fixture
