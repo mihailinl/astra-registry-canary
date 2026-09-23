@@ -10,7 +10,8 @@
 # `exp` − `iat`, the `nbf` offset, `job_workflow_ref`, `run_id`,
 # `run_attempt`, and on a re-run whether `jti` changed. It never prints or
 # sends the token and calls no service. probe-log-lint.yml reads this job's
-# whole log afterwards and is red if any line holds a JWT's shape.
+# whole log afterwards and is red if any line holds a JWT's shape or any line
+# the probe printed was masked by the runner.
 #
 # Started by a tag `author-token-probe-<anything>`, pushed by hand; the owner's
 # standing grant of 2026-09-23 covers that tag and one re-run of its run

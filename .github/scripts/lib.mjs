@@ -220,3 +220,27 @@ export function jwtLines(text) {
   });
   return hits;
 }
+
+/**
+ * Lines the probe itself printed (`<time> probe.<name> …`) that the runner
+ * masked (`***`).
+ *
+ * Why this exists: GitHub's runner masks a JWT-shaped string in a job's log
+ * even when nobody registered it as a secret. Measured 2026-09-23: the probe's
+ * fixture mode printed an unsigned fixture token nobody had registered, and
+ * the stored log said `probe.fixture ***` (run 35851332156) — so the lint
+ * B-T1.6 asked for, "its log holds no string matching the JWT shape", was
+ * green on the very case it exists to catch, and would be green on every
+ * leak. Masking is the runner's courtesy, not the probe's guarantee: the step
+ * summary, an artifact or a differently-split string are not masked the same
+ * way, and a probe that prints a token has a defect whether or not the log
+ * hides it. Nothing the probe prints is a secret, so a mask on one of its own
+ * lines means it printed something the runner took for one.
+ */
+export function maskedProbeLines(text) {
+  const hits = [];
+  text.split("\n").forEach((l, i) => {
+    if (/^\S+Z probe\.[a-z0-9_.]+ .*\*\*\*/.test(l.replace(/^\uFEFF/, ""))) hits.push(i + 1);
+  });
+  return hits;
+}
