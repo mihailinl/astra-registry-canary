@@ -1,7 +1,7 @@
 [plugin]
 id = "release-canary-e3329df"
 name = "Release Canary e3329df"
-version = "0.1.0"
+version = "0.20260923.1"
 description = "A test fixture, not a plugin for users: the registry release canary (BOT-88), built weekly through plugin-release.yml at e3329df"
 author = "Minice"
 license = "GPL-3.0-or-later"

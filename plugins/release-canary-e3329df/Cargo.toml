@@ -1,6 +1,6 @@
 [package]
 name = "release_canary_e3329df"
-version = "0.1.0"
+version = "0.20260923.1"
 edition = "2024"
 
 [dependencies]
