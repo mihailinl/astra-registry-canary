@@ -3,7 +3,10 @@
 // Copyright (C) 2026 Minice
 //
 // B-T1.6's lint over the author-token probe: no line of the probe job's log
-// holds a JWT's shape.
+// holds a JWT's shape — and, because GitHub's runner masks a JWT-shaped
+// string before the log is stored (measured 2026-09-23, run 35851332156), no
+// line the probe printed carries the runner's mask `***` either. The first
+// rule alone was green on the fixture it exists to catch.
 //
 //     RUN_ID=<id> RUN_ATTEMPT=<n> GH_TOKEN=… node .github/scripts/probe-log-lint.mjs
 //
@@ -14,7 +17,7 @@
 // measurement, `probe.fixture` for the watch). A hit is reported by job and
 // line number only: a lint that found a leaked token must not print it again.
 
-import { jwtLines } from "./lib.mjs";
+import { jwtLines, maskedProbeLines } from "./lib.mjs";
 
 const { GITHUB_API_URL: API, GITHUB_REPOSITORY: REPO, RUN_ID, RUN_ATTEMPT, GH_TOKEN } = process.env;
 for (const [k, v] of Object.entries({ GITHUB_API_URL: API, GITHUB_REPOSITORY: REPO, RUN_ID, RUN_ATTEMPT, GH_TOKEN })) {
@@ -35,10 +38,15 @@ for (const job of jobs) {
   const log = await get(`${API}/repos/${REPO}/actions/jobs/${job.id}/logs`, "text");
   if (/ probe\.(claim_names|fixture) /.test(log)) marker = true;
   const hits = jwtLines(log);
-  console.log(`job ${JSON.stringify(job.name)} (${job.id}): ${log.split("\n").length} lines read, ${hits.length} with a JWT's shape`);
+  const masked = maskedProbeLines(log);
+  console.log(`job ${JSON.stringify(job.name)} (${job.id}): ${log.split("\n").length} lines read, ${hits.length} with a JWT's shape, ${masked.length} probe line(s) the runner masked`);
   if (hits.length) {
     red++;
     console.log(`::error::job ${JSON.stringify(job.name)} of run ${RUN_ID} attempt ${RUN_ATTEMPT} printed a JWT-shaped string on log line(s) ${hits.join(", ")}. The probe must never print a token.`);
+  }
+  if (masked.length) {
+    red++;
+    console.log(`::error::job ${JSON.stringify(job.name)} of run ${RUN_ID} attempt ${RUN_ATTEMPT}: the runner masked what the probe printed on log line(s) ${masked.join(", ")}. Nothing the probe prints is a secret, so it printed something the runner took for one — a token, most likely. Masking hides it in this log only.`);
   }
 }
 if (!marker) {

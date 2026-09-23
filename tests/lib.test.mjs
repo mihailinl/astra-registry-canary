@@ -15,7 +15,7 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 
 import {
-  CANARY_BINDING_TOKEN, ID_23_SOURCE, compareAllowlist, jwtLines, nextVersion, readCallers,
+  CANARY_BINDING_TOKEN, ID_23_SOURCE, compareAllowlist, jwtLines, maskedProbeLines, nextVersion, readCallers,
   setTableVersion, tagsToPrune, withBindingLine,
 } from "../.github/scripts/lib.mjs";
 
@@ -115,4 +115,18 @@ test("the JWT lint finds a token by line and does not return it", () => {
   const log = ["2026-09-23T10:00:00Z probe.claim_names aud,exp", `2026-09-23T10:00:01Z oops ${jwt}`, "done"].join("\n");
   assert.deepEqual(jwtLines(log), [2]);
   assert.deepEqual(jwtLines("probe.claim_names aud,exp,iat\nprobe.jti_sha256_16 0123456789abcdef"), []);
+});
+
+test("a probe line the runner masked is found; the step header's masked env is not", () => {
+  // The shape GitHub stored for the fixture on 2026-09-23 (run 35851332156):
+  // the JWT itself was replaced by the runner's mask before the log was kept.
+  const log = [
+    "\uFEFF2026-09-23T10:53:16.0676691Z ##[group]Run node .github/scripts/token-probe.mjs --fixture",
+    "2026-09-23T10:53:16.0700000Z   GH_TOKEN: ***",
+    "2026-09-23T10:53:16.1124777Z probe.fixture ***",
+    "2026-09-23T10:53:16.1200000Z probe.claim_names aud,exp,iat",
+  ].join("\n");
+  assert.deepEqual(maskedProbeLines(log), [3]);
+  assert.deepEqual(jwtLines(log), [], "a masked log holds no JWT shape: that is why the second rule exists");
+  assert.deepEqual(maskedProbeLines(log.replace("probe.fixture ***", "probe.fixture ok")), []);
 });
