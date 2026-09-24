@@ -42,7 +42,7 @@ import path from "node:path";
 import { execFileSync } from "node:child_process";
 
 import {
-  compareAllowlist, nextVersion, readCallers, setTableVersion, withBindingLine,
+  compareAllowlist, nextVersion, readAllCallers, setTableVersion, withBindingLine,
 } from "./lib.mjs";
 
 const TRUST_URL = "https://raw.githubusercontent.com/mihailinl/astra-registry/main/registry/v1/trust.json";
@@ -79,12 +79,15 @@ async function main() {
   const wfDir = path.join(ROOT, ".github", "workflows");
   const files = fs.readdirSync(wfDir).filter((n) => /\.ya?ml$/.test(n)).sort()
     .map((n) => ({ path: `.github/workflows/${n}`, text: fs.readFileSync(path.join(wfDir, n), "utf8") }));
-  const callers = readCallers(files);
+  // The staging listing's caller (M-T2.2) is read, held to the allowlist and
+  // never tagged: its release is the owner's act, once per withdrawal walk.
+  const { canaries: callers, staging } = readAllCallers(files);
   const shas = await allowlist();
-  const { tag, problems } = compareAllowlist(callers, shas);
+  const { tag, problems } = compareAllowlist(callers, shas, { staging });
 
   console.log(`trust.json allowlists ${shas.length}: ${shas.join(" ")}`);
   for (const c of callers) console.log(`caller  ${c.path}  @${c.sha.slice(0, 12)}  ${c.pluginDir}  ${c.prefix}<version>`);
+  if (staging) console.log(`staging ${staging.path}  @${staging.sha.slice(0, 12)}  ${staging.pluginDir}  never tagged here: its tag is the owner's act`);
   if (tag.length === 0) throw new Error(`no caller here pins an allowlisted commit, so there is nothing to tag.\n${problems.join("\n")}`);
 
   const existing = git("ls-remote", "--tags", "origin").split("\n").filter(Boolean)
