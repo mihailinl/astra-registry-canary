@@ -74,6 +74,29 @@ to end without doing it to anybody's plugin. The registry derives it
 - the **test-client bundle** an installed Astra 0.2.x copy is disabled and
   restored with in ROLL-56's withdrawal walks: any canary release's bundle.
 
+## ROLL-60's rehearsal: `signed`, `signed-compromise` and Pages
+
+The registry's R2 exit (contract ROLL-60) needs a staging plugins service and a
+debug 0.2.x daemon to accept a key rotation signed with the throwaway
+`tools/testkeys` keys. The service reads it from here:
+
+| Here | What it is |
+|---|---|
+| branch `signed` | The rotation series (`tools/testkeys/fixtures/rehearsal-r2/rotation/`), one commit per step, each the exact commit the registry's signer made when the series was generated |
+| branch `signed-compromise` | D10's compromise line: rotation steps 0-2, then `compromise/00-drop-2026a`. Its own branch, because it forks from step 2 |
+| Pages | Serves branch `signed` (legacy build, root), so `registry/v1/*.json` at `https://mihailinl.github.io/astra-registry-canary/` is always a step the branch carries |
+| `main`'s merge of `refs/rehearsal-source/*` | The fixture generator's throwaway registry history, merged with `-s ours`: the commits every step's `Source-Commit` names, so the service's TRUST-3 holds. `main`'s tree is unchanged by it |
+
+- **Everything on those two branches is TEST-ONLY**, signed by keys whose
+  private halves are public in the registry. No shipped Astra build trusts them.
+- **Only `astra-registry`'s `tools/testkeys/rehearsal-push.mjs --step N` pushes
+  there**, one fast-forward commit per step, never forced. Nothing else is
+  pushed to them, and they are never rewound: a service that has accepted a step
+  refuses a head that does not descend from it (SERVE-18).
+- **The lists in the series expire on 2026-09-29.** After that the branches are
+  a record, and a new rehearsal needs a regenerated series on new branches.
+- The runbook is astra-plugins-ops `runbooks/roll-60-rehearsal.md`.
+
 ## Tags pushed here without asking, and nothing else
 
 Under the owner's standing grant of 2026-09-23, these are pushed or deleted
