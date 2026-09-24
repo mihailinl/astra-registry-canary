@@ -40,7 +40,23 @@ export function canaryTagPattern(prefix) {
 }
 
 /**
- * Callers of the release workflow, read from workflow files as text.
+ * The plugin of MOD-16's staging listing (registry plan M-T2.1, M-T2.2), whose
+ * caller is the one caller here the weekly canary never tags.
+ *
+ * Its id is registry `policy/reserved-ids.json`'s `staging_listing_id`, which
+ * the registry derives `unlisted` from its first listing. It is released only
+ * when a person walks a withdrawal, and its tag is that person's act: a weekly
+ * tag of it would be a weekly submission of a listing nobody asked for. Its pin
+ * may equal a canary caller's — the staging release should go through a commit
+ * the canary proves every week — so the one-caller-per-commit rule does not
+ * apply to it. Every other rule does: it is a caller, and a movable pin, a
+ * drifted glob or a de-allowlisted commit is as much a defect in it.
+ */
+export const STAGING_PLUGIN_DIR = "plugins/astra-withdrawal-canary";
+
+/**
+ * Callers of the release workflow, read from workflow files as text: the
+ * canary callers, and the staging caller if there is one.
  *
  * A caller is a file with exactly one `uses: <RELEASE_WORKFLOW>@<sha>` line.
  * From it this reads the pin, `plugin-dir`, `tag-prefix` and the `tags:` glob,
@@ -48,10 +64,15 @@ export function canaryTagPattern(prefix) {
  * two must stay in step or a pushed tag starts nothing (the reusable
  * workflow's own `tag-prefix` description says why).
  *
+ * The staging caller is the one whose `plugin-dir` is `STAGING_PLUGIN_DIR`,
+ * and there is at most one. No two callers share a tag prefix or a plugin
+ * directory; no two CANARY callers share a pin.
+ *
  * @param {{path: string, text: string}[]} files
- * @returns {{path: string, sha: string, pluginDir: string, prefix: string}[]}
+ * @returns {{canaries: {path: string, sha: string, pluginDir: string, prefix: string}[],
+ *            staging: {path: string, sha: string, pluginDir: string, prefix: string} | null}}
  */
-export function readCallers(files) {
+export function readAllCallers(files) {
   const out = [];
   for (const { path, text } of files) {
     const calls = [...text.matchAll(/^\s*uses:\s*(\S+)/gm)].map((m) => m[1]).filter((u) => u.includes("plugin-release.yml"));
@@ -79,23 +100,46 @@ export function readCallers(files) {
     canaryTagPattern(prefix); // throws on an unusable prefix
     out.push({ path, sha: uses[0][2], pluginDir, prefix });
   }
+  const staged = out.filter((c) => c.pluginDir === STAGING_PLUGIN_DIR);
+  if (staged.length > 1) {
+    throw new Error(`${staged.map((c) => c.path).join(" and ")} are both callers for the staging plugin ${STAGING_PLUGIN_DIR}; there is one staging listing and one caller releases it`);
+  }
   const seen = new Map();
   for (const c of out) {
+    const staging = c.pluginDir === STAGING_PLUGIN_DIR;
     for (const [k, v] of [["sha", c.sha], ["prefix", c.prefix], ["pluginDir", c.pluginDir]]) {
+      // The staging caller's pin may be a canary's: it is never tagged here,
+      // so it takes no commit's weekly slot. Its prefix and directory are its
+      // own like anybody's.
+      if (staging && k === "sha") continue;
       const key = `${k}:${v}`;
       if (seen.has(key)) throw new Error(`${c.path} and ${seen.get(key)} share ${k} ${v}; each allowlisted commit gets its own caller, plugin and tag namespace`);
       seen.set(key, c.path);
     }
   }
-  return out.sort((a, b) => a.path.localeCompare(b.path));
+  const byPath = (a, b) => a.path.localeCompare(b.path);
+  return { canaries: out.filter((c) => c.pluginDir !== STAGING_PLUGIN_DIR).sort(byPath), staging: staged[0] ?? null };
 }
 
 /**
- * The callers against trust.json's allowlist, both directions.
+ * The canary callers alone: the ones the weekly job tags and prunes. The
+ * staging caller is never among them (see `STAGING_PLUGIN_DIR`).
+ *
+ * @param {{path: string, text: string}[]} files
+ * @returns {{path: string, sha: string, pluginDir: string, prefix: string}[]}
+ */
+export function readCallers(files) {
+  return readAllCallers(files).canaries;
+}
+
+/**
+ * The canary callers against trust.json's allowlist, both directions, and the
+ * staging caller's pin against it too. The staging caller is never returned in
+ * `tag`.
  *
  * @returns {{tag: object[], problems: string[]}} the callers to tag, and why the run is red
  */
-export function compareAllowlist(callers, allowlisted) {
+export function compareAllowlist(callers, allowlisted, { staging = null } = {}) {
   const problems = [];
   const allow = new Set(allowlisted);
   const pinned = new Set(callers.map((c) => c.sha));
@@ -109,7 +153,10 @@ export function compareAllowlist(callers, allowlisted) {
       problems.push(`${c.path} pins ${c.sha}, which trust.json no longer allowlists; it was not tagged. Remove the caller and its plugin, or — for AP-20's candidate SHA — tag it by hand under that task's approval.`);
     }
   }
-  return { tag: callers.filter((c) => allow.has(c.sha)), problems };
+  if (staging && !allow.has(staging.sha)) {
+    problems.push(`${staging.path} pins ${staging.sha}, which trust.json no longer allowlists, so the staging listing's next release through it would be refused by the registry. It is never tagged by this job; re-pin it with \`astra-plugin init-ci --ref <an allowlisted sha>\` before the next withdrawal walk.`);
+  }
+  return { tag: callers.filter((c) => allow.has(c.sha) && c.pluginDir !== STAGING_PLUGIN_DIR), problems };
 }
 
 /** `YYYYMMDD` of a Date, in UTC. */

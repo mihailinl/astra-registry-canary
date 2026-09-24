@@ -28,7 +28,9 @@ verdict: it is a dry run that commits nothing there.
 |---|---|
 | `plugins/release-canary-<sha7>/` | One plugin per allowlisted commit, scaffolded by `astra-plugin new` at the CLI commit that workflow builds with |
 | `.github/workflows/release-release-canary-<sha7>.yml` | Its caller, exactly as `astra-plugin init-ci --ref <sha>` wrote it |
-| `.github/workflows/canary-tag.yml` | The weekly tag, one per caller, and a heartbeat to the registry's dead-man receiver |
+| `plugins/astra-withdrawal-canary/` | The registry's **staging listing** (MOD-16; registry plan M-T2.1, M-T2.2), the same scaffold. Published unlisted, and **never tagged by the weekly job** |
+| `.github/workflows/release-astra-withdrawal-canary.yml` | Its caller, exactly as `astra-plugin init-ci --ref c3f342469d186ef48458992930bf1b7c583c78d4` wrote it: the newest allowlisted commit, the one `plugin-release/v1` points at |
+| `.github/workflows/canary-tag.yml` | The weekly tag, one per canary caller, and a heartbeat to the registry's dead-man receiver |
 | `.github/workflows/author-token-probe.yml` | OPEN-MBE-2's one-off measurement of an author-audience OIDC token's claims. It never prints or sends the token |
 | `.github/workflows/probe-log-lint.yml` | Red if the probe's log ever holds a JWT's shape, or the runner masked a line the probe printed — GitHub masks a JWT-shaped string before storing the log, so the shape alone is never seen |
 | `.github/workflows/keepalive.yml` | One commit a month, so GitHub never switches this repository's schedules off (ROLL-62) |
@@ -46,11 +48,26 @@ line's grammar, never asks for a verdict, and a real token would be a
 credential in a public file for no purpose. Keeping it off `main` keeps it off
 every other release this repository makes.
 
+### The staging listing
+
+`plugins/astra-withdrawal-canary/` is the registry's staging listing (registry
+plan M-T2.1/M-T2.2, at rollout R2): the one listing the registry may delist,
+relist, revoke and un-revoke on demand, so that a withdrawal can be walked end
+to end without doing it to anybody's plugin. The registry derives it
+`unlisted` from its first listing, so it is never in a signed catalogue.
+
+- It is released from `main`, which is one more reason `main` carries no
+  binding line.
+- Its caller pins an allowlisted commit and may share it with a canary caller;
+  `.github/scripts/lib.mjs` (`STAGING_PLUGIN_DIR`) tells the two apart. **The
+  weekly job never tags it and `prune` never deletes its tags.** `canary-tag`
+  still reads its pin and goes red when trust.json no longer allowlists it.
+- Its tag, `astra-withdrawal-canary-v<version>` (the first is
+  `astra-withdrawal-canary-v0.1.0`), is the owner's act, once per walk, and is
+  recorded with the walk.
+
 ### Also here, later
 
-- the registry's **staging listing**, `astra-withdrawal-canary` (registry plan
-  M-T2.1/M-T2.2, at rollout R2), released from `main` — which is one more
-  reason `main` carries no binding line;
 - the one-off **live run** of the registry's moderation-coverage canary
   (M-T1.5), on a branch of its own;
 - **AP-20's candidate canary** before a renewal ceremony (2027);

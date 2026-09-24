@@ -4,7 +4,8 @@
 # The canary's own rules, held to fixtures and to this repository's files
 # (tests/lib.test.mjs): the callers and their tag globs, the version rewrite,
 # the binding line's grammar and its absence from main, the prune rule and the
-# JWT lint.
+# JWT lint; and (tests/staging.test.mjs) the staging listing's caller, which the
+# weekly job reads and never tags.
 
 name: Checks
 
