@@ -24,8 +24,15 @@
 // to even once the check is armed, and from then on a secret that disappears
 // is a silence the receiver pages on, which is the guard.
 //
-// Present and failing — unreachable, not https, a non-2xx answer — fails the
-// step, so silence at the receiver and red in the run agree.
+// Present and failing — unreachable, not https, a non-2xx answer, or a 2xx
+// whose body is not `OK` — fails the step, so silence at the receiver and red
+// in the run agree. The body matters because healthchecks.io answers a UUID
+// ping URL with 200 whatever it did with it: `OK` when a check took it, `OK
+// (not found)` when no check has that UUID, `OK (rate limited)` when it
+// dropped it. Until 2026-09-25 this counted any 2xx, so a secret holding the
+// URL of a deleted or re-created check was a green step and a check nobody
+// fed (astra-registry's bot/heartbeat.mjs had the same test, fixed the same
+// day).
 
 const NAME = "ASTRA_DEADMAN_URL_CANARY_TAG";
 const url = process.env[NAME];
@@ -50,6 +57,11 @@ try {
   });
   if (!res.ok) {
     console.error(`::error::the receiver answered HTTP ${res.status} for check canary-tag`);
+    process.exit(1);
+  }
+  const answer = String(await res.text()).trim();
+  if (answer !== "OK") {
+    console.error(`::error::the receiver answered HTTP ${res.status} ${JSON.stringify(answer.slice(0, 64))} for check canary-tag, not "OK": no check took this ping. "OK (not found)" means ${NAME} holds the URL of a check that was deleted or re-created under a new UUID.`);
     process.exit(1);
   }
 } catch (e) {
