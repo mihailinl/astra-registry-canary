@@ -1,3 +1,4 @@
 # Who may submit on this repository's behalf, for astra-registry's owner check.
 # BOT-88's canary adds a binding line on its own tag commits only; main carries none.
 mihailinl
+astra-binding: bot88-canary-grammar-only-never-minted  # BOT-88 canary: grammar only, never minted
