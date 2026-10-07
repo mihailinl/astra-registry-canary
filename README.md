@@ -70,9 +70,30 @@ to end without doing it to anybody's plugin. The registry derives it
 
 - the one-off **live run** of the registry's moderation-coverage canary
   (M-T1.5), on a branch of its own;
-- **AP-20's candidate canary** before a renewal ceremony (2027);
+- **AP-20's candidate canary** before a renewal ceremony (2027) — the first
+  one is recorded below;
 - the **test-client bundle** an installed Astra 0.2.x copy is disabled and
   restored with in ROLL-56's withdrawal walks: any canary release's bundle.
+
+### AP-20's candidate canary, recorded
+
+AP-20 prepares the renewal's workflow commit ahead of the 2027 ceremony, and
+its own clause ("Test the thing before the freeze") asks for one canary
+release through the candidate SHA before trust.json's allowlist moves to it —
+**OWNER APPROVAL**, unless the standing canary-tag scope names candidate SHAs
+(it does not: see "Tags pushed here without asking" below).
+
+| Candidate SHA | AstraPlugins commit | Owner approval | Tag |
+|---|---|---|---|
+| `e36f6a2413012dc513d347550512719008e66844` | #87, "Every author's release notes taught a verify command that fails on a good file (C40)", merged 2026-10-06T01:42:11Z | "да", 2026-10-06, to the coordinator, for this candidate's tag and re-pin | `release-canary-e36f6a2-v0.20261007.1` |
+
+This caller and its plugin were added by hand (`plugins/release-canary-e36f6a2/`,
+`.github/workflows/release-release-canary-e36f6a2.yml`), because trust.json did
+not yet allowlist the commit: `canary-tag.mjs`'s `compareAllowlist` skips any
+caller pinning a commit it does not allowlist and says so in its own words —
+"for AP-20's candidate SHA — tag it by hand under that task's approval". The
+tag was pushed the same way, by hand, under the approval above, not by the
+weekly job.
 
 ## ROLL-60's rehearsal: `signed`, `signed-compromise` and Pages
 
@@ -110,7 +131,8 @@ without a per-tag approval:
   the run it starts.
 
 Any other tag here — the staging listing's release tag, AP-20's candidate
-canary — is its own task's act and is recorded there.
+canary — is its own task's act and is recorded there (AP-20's candidate
+canary: "AP-20's candidate canary, recorded", above).
 
 ## The credential, and where things are kept
 
