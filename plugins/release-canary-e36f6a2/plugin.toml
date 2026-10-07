@@ -1,7 +1,7 @@
 [plugin]
 id = "release-canary-e36f6a2"
 name = "Release Canary e36f6a2"
-version = "0.1.0"
+version = "0.20261007.1"
 description = "A test fixture, not a plugin for users: the registry release canary (BOT-88), AP-20's candidate caller for plugin-release.yml at e36f6a2, tagged by hand under the owner's approval before trust.json allowlists it"
 author = "Minice"
 license = "GPL-3.0-or-later"
