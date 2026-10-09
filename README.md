@@ -86,6 +86,7 @@ release through the candidate SHA before trust.json's allowlist moves to it —
 | Candidate SHA | AstraPlugins commit | Owner approval | Tag |
 |---|---|---|---|
 | `e36f6a2413012dc513d347550512719008e66844` | #87, "Every author's release notes taught a verify command that fails on a good file (C40)", merged 2026-10-06T01:42:11Z | "да", 2026-10-06, to the coordinator, for this candidate's tag and re-pin | `release-canary-e36f6a2-v0.20261007.1` |
+| `9864f03bafb52a7de5215ff92376eeefa7331431` | "ci(plugins): pin merged UI kit tooling with current manifest checks", 2026-10-07T17:52:16Z: master's newest change to `plugin-release.yml` (the UI kit's tooling pin, bun 1.3.4, a frontend install step), on top of #87 | "ok, do as you think better, all must be nice", 2026-10-09, to the coordinator, answering whether to canary this commit before the ceremony; then the owner's own `/permissions` rules for this caller's files | `release-canary-9864f03-v0.20261009.1` |
 
 This caller and its plugin were added by hand (`plugins/release-canary-e36f6a2/`,
 `.github/workflows/release-release-canary-e36f6a2.yml`), because trust.json did
