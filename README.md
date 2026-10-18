@@ -29,7 +29,7 @@ verdict: it is a dry run that commits nothing there.
 | `plugins/release-canary-<sha7>/` | One plugin per allowlisted commit, scaffolded by `astra-plugin new` at the CLI commit that workflow builds with |
 | `.github/workflows/release-release-canary-<sha7>.yml` | Its caller, exactly as `astra-plugin init-ci --ref <sha>` wrote it |
 | `plugins/astra-withdrawal-canary/` | The registry's **staging listing** (MOD-16; registry plan M-T2.1, M-T2.2), the same scaffold. Published unlisted, and **never tagged by the weekly job** |
-| `.github/workflows/release-astra-withdrawal-canary.yml` | Its caller, exactly as `astra-plugin init-ci --ref c3f342469d186ef48458992930bf1b7c583c78d4` wrote it: the newest allowlisted commit, the one `plugin-release/v1` points at |
+| `.github/workflows/release-astra-withdrawal-canary.yml` | Its caller, exactly as `astra-plugin init-ci --ref b6e9140d53060585c70280e979b58202f34966ba` wrote it: the newest allowlisted commit, the one `plugin-release/v1` points at |
 | `.github/workflows/canary-tag.yml` | The weekly tag, one per canary caller, and a heartbeat to the registry's dead-man receiver |
 | `.github/workflows/author-token-probe.yml` | OPEN-MBE-2's one-off measurement of an author-audience OIDC token's claims. It never prints or sends the token |
 | `.github/workflows/probe-log-lint.yml` | Red if the probe's log ever holds a JWT's shape, or the runner masked a line the probe printed — GitHub masks a JWT-shaped string before storing the log, so the shape alone is never seen |
@@ -87,6 +87,7 @@ release through the candidate SHA before trust.json's allowlist moves to it —
 |---|---|---|---|
 | `e36f6a2413012dc513d347550512719008e66844` | #87, "Every author's release notes taught a verify command that fails on a good file (C40)", merged 2026-10-06T01:42:11Z | "да", 2026-10-06, to the coordinator, for this candidate's tag and re-pin | `release-canary-e36f6a2-v0.20261007.1` |
 | `9864f03bafb52a7de5215ff92376eeefa7331431` | "ci(plugins): pin merged UI kit tooling with current manifest checks", 2026-10-07T17:52:16Z: master's newest change to `plugin-release.yml` (the UI kit's tooling pin, bun 1.3.4, a frontend install step), on top of #87 | "ok, do as you think better, all must be nice", 2026-10-09, to the coordinator, answering whether to canary this commit before the ceremony; then the owner's own `/permissions` rules for this caller's files | `release-canary-9864f03-v0.20261009.1` |
+| `b6e9140d53060585c70280e979b58202f34966ba` | merge of #104, "plugin-release: the author wake (notify job)", 2026-10-18T03:43:09Z | not a pre-ceremony candidate: the D4 root ceremony itself (2026-10-18) allowlisted this commit in trust.json serial 4 and moved `plugin-release/v1` to it, so no separate chat approval applies | tagged by `canary-tag.yml`'s weekly job, not by hand — see note below |
 
 This caller and its plugin were added by hand (`plugins/release-canary-e36f6a2/`,
 `.github/workflows/release-release-canary-e36f6a2.yml`), because trust.json did
@@ -95,6 +96,15 @@ caller pinning a commit it does not allowlist and says so in its own words —
 "for AP-20's candidate SHA — tag it by hand under that task's approval". The
 tag was pushed the same way, by hand, under the approval above, not by the
 weekly job.
+
+`b6e9140`'s row is the opposite case: the D4 ceremony already allowlisted it
+before this repository had a caller for it, so BOT-88's canary did not cover
+the workflow every author now uses. `plugins/release-canary-b6e9140/` and
+`.github/workflows/release-release-canary-b6e9140.yml` were added by hand only
+because nothing here discovers `trust.json` itself — not because of a pending
+approval — and `compareAllowlist` does not skip it: the next `canary-tag.yml`
+run tags and releases it like any other allowlisted commit, no hand-tag
+required.
 
 ## ROLL-60's rehearsal: `signed`, `signed-compromise` and Pages
 
