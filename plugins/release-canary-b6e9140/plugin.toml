@@ -1,7 +1,7 @@
 [plugin]
 id = "release-canary-b6e9140"
 name = "Release Canary b6e9140"
-version = "0.1.0"
+version = "0.20261019.1"
 description = "A test fixture, not a plugin for users: the registry release canary (BOT-88) for plugin-release.yml at b6e9140, the commit the D4 root ceremony allowlisted in trust.json serial 4 on 2026-10-18 and moved plugin-release/v1 to"
 author = "Minice"
 license = "GPL-3.0-or-later"
