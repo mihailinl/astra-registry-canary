@@ -89,6 +89,11 @@ release through the candidate SHA before trust.json's allowlist moves to it —
 | `9864f03bafb52a7de5215ff92376eeefa7331431` | "ci(plugins): pin merged UI kit tooling with current manifest checks", 2026-10-07T17:52:16Z: master's newest change to `plugin-release.yml` (the UI kit's tooling pin, bun 1.3.4, a frontend install step), on top of #87 | "ok, do as you think better, all must be nice", 2026-10-09, to the coordinator, answering whether to canary this commit before the ceremony; then the owner's own `/permissions` rules for this caller's files | `release-canary-9864f03-v0.20261009.1` |
 | `b6e9140d53060585c70280e979b58202f34966ba` | merge of #104, "plugin-release: the author wake (notify job)", 2026-10-18T03:43:09Z | not a pre-ceremony candidate: the D4 root ceremony itself (2026-10-18) allowlisted this commit in trust.json serial 4 and moved `plugin-release/v1` to it, so no separate chat approval applies | tagged by `canary-tag.yml`'s weekly job, not by hand — see note below |
 
+`e36f6a2` was never allowlisted: the ceremony allowlisted `9864f03` (which
+contains it) instead. Its caller and plugin were removed on 2026-11-11, because
+`canary-tag.mjs` fails the weekly run for every caller whose commit trust.json
+does not allowlist, so the leftover kept `canary-tag.yml` red every Monday.
+
 This caller and its plugin were added by hand (`plugins/release-canary-e36f6a2/`,
 `.github/workflows/release-release-canary-e36f6a2.yml`), because trust.json did
 not yet allowlist the commit: `canary-tag.mjs`'s `compareAllowlist` skips any
