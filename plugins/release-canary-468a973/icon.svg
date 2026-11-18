@@ -17,9 +17,9 @@
      registry drops an icon carrying any of those, and your plugin would list
      with no picture at all. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="64" height="64"
-     shape-rendering="crispEdges" role="img" aria-label="Release Canary 496f440">
-  <title>Release Canary 496f440</title>
-  <rect width="16" height="16" fill="#ca8a04"/>
+     shape-rendering="crispEdges" role="img" aria-label="Release Canary 468a973">
+  <title>Release Canary 468a973</title>
+  <rect width="16" height="16" fill="#db2777"/>
   <rect x="4" y="2" width="2" height="1" fill="#f8fafc"/>
   <rect x="10" y="2" width="2" height="1" fill="#f8fafc"/>
   <rect x="4" y="3" width="2" height="1" fill="#f8fafc"/>

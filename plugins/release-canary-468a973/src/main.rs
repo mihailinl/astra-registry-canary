@@ -1,10 +1,10 @@
 use astra_plugin_sdk::prelude::*;
 
 #[derive(Default)]
-struct ReleaseCanary496f440;
+struct ReleaseCanary468a973;
 
 #[astra::plugin]
-impl ReleaseCanary496f440 {
+impl ReleaseCanary468a973 {
     /// Say hello. Describe when to use the tool, not how it works.
     #[tool]
     async fn hello(&self) -> Result<String, ToolError> {
@@ -12,7 +12,7 @@ impl ReleaseCanary496f440 {
     }
 }
 
-astra::main!(ReleaseCanary496f440::default());
+astra::main!(ReleaseCanary468a973::default());
 
 #[cfg(test)]
 mod tests {
@@ -29,7 +29,7 @@ mod tests {
     /// `astra_plugin_sdk::testing::WireHarness`.
     #[tokio::test]
     async fn it_starts_and_answers() {
-        let h = Harness::new(ReleaseCanary496f440::default())
+        let h = Harness::new(ReleaseCanary468a973::default())
             .with_config(json!({}))
             .start()
             .await
