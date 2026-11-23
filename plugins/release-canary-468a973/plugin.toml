@@ -1,7 +1,7 @@
 [plugin]
 id = "release-canary-468a973"
 name = "Release Canary 468a973"
-version = "0.1.0"
+version = "0.20261123.1"
 description = "A test fixture, not a plugin for users: the registry release canary (BOT-88) for plugin-release.yml at 468a973 (the release CLI pin cli-v0.5.2, with the macOS arm64 leg), allowlisted in trust.json serial 6"
 author = "Minice"
 license = "GPL-3.0-or-later"
